@@ -24,7 +24,7 @@ module axis_measure_top (
     // AW: Write request
     input wire                           s_axi_control_awvalid,
     output wire                          s_axi_control_awready,
-    input wire  [31:0]                   s_axi_control_awaddr ,
+    input wire  [15:0]                   s_axi_control_awaddr ,
     
     // W: Write data
     input wire                           s_axi_control_wvalid,
@@ -35,7 +35,7 @@ module axis_measure_top (
     // AR: Read request
     input wire                           s_axi_control_arvalid,
     output wire                          s_axi_control_arready,
-    input wire  [31:0]                   s_axi_control_araddr,
+    input wire  [15:0]                   s_axi_control_araddr,
     
     // R: Read data
     output reg                          s_axi_control_rvalid,
