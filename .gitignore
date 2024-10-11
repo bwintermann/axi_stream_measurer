@@ -5,3 +5,4 @@ axis_measurer/
 xo/
 ip_repo/
 .Xil
+*.str

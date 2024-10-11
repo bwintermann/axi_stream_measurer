@@ -59,6 +59,13 @@ The data of the AXI Streams is always passed through. You only control the count
 - To _stop counting_ assertions write `0x0` to the control register (initial value)
 - To _reset_ all counter values, write `0x2` to the control register (this __stops__ recording until you start again) // TODO: Make this configurable
 
+## Footprint
+This is the footprint for the AXI Stream going through the kernel
+- _Throughput_: Unchanged
+- _Latency_: 1 clock cycle
+- _Post-Synthesis LUT Estimate_: 156
+- _Post-Synthesis FF Estimate_: 227
+
 ## Issues
 - If the Vivado version does not match your version, you will need to adjust the year number in the project creation Tcl script. Use `make setver VIVADO_YEAR=2022` for this
 
