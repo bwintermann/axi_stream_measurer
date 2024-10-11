@@ -28,6 +28,10 @@ class AXISMeasureKernel {
             kernel = ip;
         }
 
+        AXISMeasureKernel(xrt::device &device, xrt::uuid &uuid, std::string &name) {
+            kernel = xrt::ip(device, uuid, name);
+        }
+
         void start_measurement() {
             kernel.write_register(AXIS_MEASURE_CONTROL_OFFSET, START);
         }
