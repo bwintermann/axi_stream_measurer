@@ -2,3 +2,6 @@ axis_measurer/
 *.log
 *.jou
 **/axis_measure_defs.vh
+xo/
+ip_repo/
+.Xil

@@ -76,7 +76,7 @@ module axis_measure_top (
     wire can_record = (|RECORD_ONLY_NONZERO && |instream_tdata) || (~|RECORD_ONLY_NONZERO);
 
     // Control register
-    reg [31:0] control_reg = 32'(INITIAL_RECORD_ENABLE);
+    reg [31:0] control_reg = INITIAL_RECORD_ENABLE;
 
     // Just forward the AXI Stream
     assign outstream_tdata = instream_tdata;

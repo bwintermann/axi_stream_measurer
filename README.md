@@ -21,8 +21,10 @@ make DATA_WIDTH=64
 
 To record assertions and the last frame only when the values inside it are non zero, set the appropiate flag:
 ```
-make RECORD_ONLY_NON_ZERO=1
+make RECORD_ONLY_NONZERO=1
 ```
+
+After having run the build, you can inspect the vivado project using ```make open```.
 
 ## Insertion into the design
 Simply instantiate the kernel and connect it, then run `v++` as usual to link.
