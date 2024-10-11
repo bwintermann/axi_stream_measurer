@@ -60,7 +60,7 @@ The data of the AXI Streams is always passed through. You only control the count
 - To _reset_ all counter values, write `0x2` to the control register (this __stops__ recording until you start again) // TODO: Make this configurable
 
 ## Footprint
-This is the footprint for the AXI Stream going through the kernel
+This is the footprint for a 32-bit AXI Stream going through the kernel
 - _Throughput_: Unchanged
 - _Latency_: 1 clock cycle
 - _Post-Synthesis LUT Estimate_: 156
