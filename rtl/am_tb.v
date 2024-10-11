@@ -65,6 +65,11 @@ module tb();
         .outstream_tvalid(outstream_tvalid)
     );
 
+    // For testing always write every byte
+    initial begin
+        wstrb = 4'b1111;
+    end
+
     task read_request(
         input reg [31:0] inaddr
     ); begin

@@ -156,12 +156,14 @@ module axis_measure_top (
                 awaiting_write <= 0;
             end
         end else begin
-            awaiting_write <= 0;
+            if (awaiting_write & s_axi_control_wvalid) begin
+                awaiting_write <= 0;
+            end
         end
 
         // Save write data and tell master RESP = OK
-        if (awaiting_write) begin
-            control_reg <= s_axi_control_wdata; // TODO: Add strobe bitmasks
+        if (awaiting_write & s_axi_control_wvalid) begin
+            control_reg <= s_axi_control_wdata & {{8{s_axi_control_wstrb[3]}}, {8{s_axi_control_wstrb[2]}}, {8{s_axi_control_wstrb[1]}}, {8{s_axi_control_wstrb[0]}}}; 
             s_axi_control_bvalid <= 1;
         end
 

@@ -199,7 +199,7 @@ set files [list \
 ]
 add_files -norecurse -fileset $obj $files
 
-set imported_files [import_files -fileset sim_1 $files]
+#set imported_files [import_files -fileset sim_1 $files]
 
 # Set 'sim_1' fileset file properties for remote files
 # None
