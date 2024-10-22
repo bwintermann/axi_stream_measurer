@@ -64,6 +64,7 @@ module axis_measure_top (
 
     // Awaiting an AXI Data Write beat
     reg awaiting_write = 0;
+    reg [15:0] awaiting_write_addr = 0;
 
     // Counters
     reg [2 * `STORE_DATA_WIDTH * 8 - 1 : 0] assertions = 0;
@@ -147,28 +148,36 @@ module axis_measure_top (
         if (s_axi_control_rvalid & s_axi_control_rready) begin
             s_axi_control_rvalid <= 0;
         end
+
+        // ------- Writing -------
         
         // Accept new write address
         if (s_axi_control_awvalid & s_axi_control_awready) begin
-            if (s_axi_control_awaddr == `CONTROL_OFFSET) begin
-                awaiting_write <= 1;
+            if (~(s_axi_control_wvalid & s_axi_control_wready)) begin
+                awaiting_write_addr <= s_axi_control_awaddr;
+            end
+        end
+
+
+        // Write data
+        if (s_axi_control_wvalid & s_axi_control_wready) begin
+            if (~(s_axi_control_awvalid & s_axi_control_awready)) begin
+                // Delayed data case
+                if (awaiting_write_addr == `CONTROL_OFFSET) begin
+                    control_reg <= s_axi_control_wdata;
+                end
             end else begin
-                awaiting_write <= 0;
+                // If AW and W channels are both ready at the same time, we can use the directly supplied address
+                if (s_axi_control_awaddr == `CONTROL_OFFSET) begin
+                    control_reg <= s_axi_control_wdata;
+                end
             end
-        end else begin
-            if (awaiting_write & s_axi_control_wvalid) begin
-                awaiting_write <= 0;
-            end
+            s_axi_control_bvalid <= 1;                     
         end
 
-        // Save write data and tell master RESP = OK
-        if (awaiting_write & s_axi_control_wvalid) begin
-            control_reg <= s_axi_control_wdata & {{8{s_axi_control_wstrb[3]}}, {8{s_axi_control_wstrb[2]}}, {8{s_axi_control_wstrb[1]}}, {8{s_axi_control_wstrb[0]}}}; 
-            s_axi_control_bvalid <= 1;
-        end
 
-        // Reset Response if the master accepted the OK and there is no pending write
-        if (s_axi_control_bvalid & s_axi_control_bready & ~awaiting_write) begin
+        // Reset BVALID only if no data is being sent and the signal was ack'ed
+        if (s_axi_control_bvalid & s_axi_control_bready) begin
             s_axi_control_bvalid <= 0;
         end
     end

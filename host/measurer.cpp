@@ -28,7 +28,7 @@ class AXISMeasureKernel {
             kernel = ip;
         }
 
-        AXISMeasureKernel(xrt::device &device, xrt::uuid &uuid, std::string &name) {
+        AXISMeasureKernel(xrt::device &device, xrt::uuid &uuid, std::string name) {
             kernel = xrt::ip(device, uuid, name);
         }
 
@@ -54,14 +54,16 @@ class AXISMeasureKernel {
 
         uint64_t get_assertions() {
             uint64_t data = 0;
-            data |= kernel.read_register(ASSERTIONS_OFFSET + 4) << 32;
+            data |= kernel.read_register(ASSERTIONS_OFFSET + 4);
+            data <<= 31;
             data |= kernel.read_register(ASSERTIONS_OFFSET);
             return data;
         }
 
         uint64_t get_cycles() {
             uint64_t data = 0;
-            data |= kernel.read_register(CYCLES_OFFSET + 4) << 32;
+            data |= kernel.read_register(CYCLES_OFFSET + 4);
+            data <<= 31;
             data |= kernel.read_register(CYCLES_OFFSET);
             return data;
         }

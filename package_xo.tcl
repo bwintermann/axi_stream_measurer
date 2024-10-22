@@ -19,4 +19,4 @@ ipx::create_xgui_files [ipx::current_core]
 ipx::update_checksums [ipx::current_core]
 ipx::check_integrity -kernel -xrt [ipx::current_core]
 ipx::save_core [ipx::current_core]
-package_xo  -xo_path ./xo/axis_measure_top.xo -kernel_name axi_measure_top -ip_directory ./ip_repo -ctrl_protocol ap_ctrl_none
+package_xo  -xo_path ./xo/axis_measure_top.xo -kernel_name axis_measure_top -ip_directory ./ip_repo -ctrl_protocol ap_ctrl_none
