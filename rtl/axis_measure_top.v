@@ -8,7 +8,8 @@
 `define CONTROL_OFFSET 16
 `define ASSERTIONS_OFFSET 20
 `define CYCLES_OFFSET 28
-`define LAST_FRAME_OFFSET 36
+`define LATENCY_OFFSET 36
+`define LAST_FRAME_OFFSET 44
 
 // Control signals
 `define SIG_START 32'd1
@@ -51,11 +52,11 @@ module axis_measure_top (
     //********************* AXIS INPUT STREAM *********************
     input wire [`DATA_WIDTH * 8 - 1 : 0] instream_tdata,
     input wire                          instream_tvalid,
-    output wire                         instream_tready = 0,
+    output wire                         instream_tready,
     
     //********************* AXIS OUTPUT STREAM *********************
     output wire [`DATA_WIDTH * 8 - 1 : 0] outstream_tdata,
-    output wire                          outstream_tvalid = 0,
+    output wire                          outstream_tvalid,
     input wire                           outstream_tready
 );
 
@@ -70,6 +71,8 @@ module axis_measure_top (
     reg [2 * `STORE_DATA_WIDTH * 8 - 1 : 0] assertions = 0;
     reg [2 * `STORE_DATA_WIDTH * 8 - 1 : 0] assertions_bytes = 0;
     reg [2 * `STORE_DATA_WIDTH * 8 - 1 : 0] cycles_total = 0;
+    reg [2 * `STORE_DATA_WIDTH * 8 - 1 : 0] latency = 0;
+    reg detected_assertion = 0;
     reg [`DATA_WIDTH * 8 - 1 : 0] last_frame = 0;
     
     // If the flag is set, only record values that are non zero
@@ -93,10 +96,16 @@ module axis_measure_top (
                 assertions <= assertions + 1;
                 assertions_bytes <= assertions_bytes + `DATA_WIDTH;
                 last_frame <= instream_tdata;
+                detected_assertion <= 1;
             end
 
             // Count ap_clk cycles
             cycles_total <= cycles_total + 1;
+
+            // Count latency until first assertion after clear
+            if (~detected_assertion) begin
+                latency <= latency + 1;
+            end
             
         end else begin
             // Is either SIG_STOP or SIG_CLEAR - if clear then reset all counters
@@ -104,6 +113,8 @@ module axis_measure_top (
                 cycles_total <= 0;
                 assertions <= 0;
                 assertions_bytes <= 0;
+                detected_assertion <= 0;
+                latency <= 0;
             end
         end
     end
@@ -138,7 +149,9 @@ module axis_measure_top (
                     `ASSERTIONS_OFFSET + 4: s_axi_control_rdata <= assertions[63:32];
                     `CYCLES_OFFSET: s_axi_control_rdata <= cycles_total[31:0];
                     `CYCLES_OFFSET + 4: s_axi_control_rdata <= cycles_total[63:32];
-                    default: s_axi_control_rdata <= 32'hdead;
+                    `LATENCY_OFFSET: s_axi_control_rdata <= latency[31:0];
+                    `LATENCY_OFFSET + 4: s_axi_control_rdata <= latency[63:32];
+                    default: s_axi_control_rdata <= 32'h1234dead;
                 endcase
             end
             s_axi_control_rvalid <= 1;

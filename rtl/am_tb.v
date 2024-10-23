@@ -136,6 +136,7 @@ module tb();
     endtask
 
     initial begin
+        #120;
         #100;
         read_request(0);
         #59;
@@ -168,6 +169,7 @@ module tb();
 
     initial begin
         forever begin
+            #120;
             #1;
             outstream_tready = 1;
             send_axis_packet(0);

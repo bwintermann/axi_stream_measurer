@@ -11,7 +11,8 @@
 #define AXIS_MEASURE_CONTROL_OFFSET     0x10
 #define ASSERTIONS_OFFSET               0x14
 #define CYCLES_OFFSET                   0x1C
-#define LAST_FRAME_OFFSET               0x24
+#define LATENCY_OFFSET                  0x24
+#define LAST_FRAME_OFFSET               0x2C
 
 // Constants for the control register
 #define START 0x1
@@ -75,6 +76,14 @@ class AXISMeasureKernel {
             data |= kernel.read_register(CYCLES_OFFSET + 4);
             data <<= 32;
             data |= kernel.read_register(CYCLES_OFFSET);
+            return data;
+        }
+
+        uint64_t get_latency() {
+            uint64_t data = 0;
+            data |= kernel.read_register(LATENCY_OFFSET + 4);
+            data <<= 32;
+            data |= kernel.read_register(LATENCY_OFFSET);
             return data;
         }
 
