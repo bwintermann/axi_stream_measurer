@@ -51,7 +51,7 @@ Simply include `host/measurer.cpp` and setup your host code as usual. Then initi
 AXISMeasureKernel am(device, uuid, "axis_measure_top:{am}");
 am.start_measurement();
 
-<your computation>
+// <your computation>
 
 am.stop_measurement();
 
@@ -59,13 +59,13 @@ auto assertions = am.get_assertions();
 auto cycles = am.get_cycles();
 auto latency = am.get_latency();
 
-...
+// ...
 
 // If you want to start another run, reset everything
 am.clear_and_stop_measurement();
 am.start_measurement();
 
-...
+// ...
 ``` 
 
 ## Controlling the kernel manually
