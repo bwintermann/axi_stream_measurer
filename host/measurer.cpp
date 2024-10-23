@@ -24,6 +24,8 @@ class AXISMeasureKernel {
         xrt::ip kernel;
 
     public:
+        AXISMeasureKernel() {};
+
         AXISMeasureKernel(xrt::ip ip) {
             kernel = ip;
         }
@@ -52,10 +54,18 @@ class AXISMeasureKernel {
             return kernel.read_register(AXIS_MEASURE_CONTROL_OFFSET) == 0x1;
         }
 
+        uint32_t read(uint32_t offset) {
+            return kernel.read_register(offset);
+        }
+
+        void write(uint32_t offset, uint32_t value) {
+            kernel.write_register(offset, value);
+        }
+
         uint64_t get_assertions() {
             uint64_t data = 0;
             data |= kernel.read_register(ASSERTIONS_OFFSET + 4);
-            data <<= 31;
+            data <<= 32;
             data |= kernel.read_register(ASSERTIONS_OFFSET);
             return data;
         }
@@ -63,7 +73,7 @@ class AXISMeasureKernel {
         uint64_t get_cycles() {
             uint64_t data = 0;
             data |= kernel.read_register(CYCLES_OFFSET + 4);
-            data <<= 31;
+            data <<= 32;
             data |= kernel.read_register(CYCLES_OFFSET);
             return data;
         }
@@ -76,7 +86,7 @@ class AXISMeasureKernel {
             }
         }
 
-        unsigned int mbps(unsigned int mhz, unsigned int axis_data_width_bytes) {
+        auto mbps(unsigned int mhz, unsigned int axis_data_width_bytes) {
             return ((axis_data_width_bytes * get_assertions()) / 1000000.0) / (get_cycles() / (mhz * 1000000.0)); 
         }
 

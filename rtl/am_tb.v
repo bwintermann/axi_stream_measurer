@@ -119,6 +119,22 @@ module tb();
     end
     endtask
 
+    task start_simul(
+    ); begin
+        #1;
+        awaddr = `CONTROL_OFFSET;
+        awvalid = 1;
+        wdata = `SIG_START;
+        wvalid = 1;
+        bready = 1;
+        #20
+        awvalid = 0;
+        wvalid = 0;
+        #20
+        bready = 0;
+    end
+    endtask
+
     initial begin
         #100;
         read_request(0);
@@ -129,7 +145,7 @@ module tb();
         #59;
         clear_request();
         #119;
-        start();
+        start_simul();
         #59;
         read_request(`CYCLES_OFFSET);
         #59;

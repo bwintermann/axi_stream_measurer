@@ -51,11 +51,11 @@ module axis_measure_top (
     //********************* AXIS INPUT STREAM *********************
     input wire [`DATA_WIDTH * 8 - 1 : 0] instream_tdata,
     input wire                          instream_tvalid,
-    output wire                         instream_tready,
+    output wire                         instream_tready = 0,
     
     //********************* AXIS OUTPUT STREAM *********************
     output wire [`DATA_WIDTH * 8 - 1 : 0] outstream_tdata,
-    output wire                          outstream_tvalid,
+    output wire                          outstream_tvalid = 0,
     input wire                           outstream_tready
 );
 
