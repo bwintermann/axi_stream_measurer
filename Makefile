@@ -5,6 +5,8 @@ DATA_WIDTH ?= 4
 RECORD_ONLY_NONZERO ?= 0
 VIVADO_YEAR ?= 2022
 
+KERNEL_NAME ?= axis_measure_top
+
 SOURCES := rtl/axis_measure_top.v rtl/axis_measure_defs.vh rtl/am_tb.v
 
 rtl/axis_measure_defs.vh: rtl/axis_measure_defs_template.vh
@@ -17,11 +19,11 @@ axis_measurer/axis_measurer.xpr: $(SOURCES)
 	vivado -mode batch -source create_project.tcl
 
 xo/axis_measurer_top.xo: axis_measurer/axis_measurer.xpr package_xo.tcl 
-	vivado -mode batch -source package_xo.tcl
+	vivado -mode batch -source package_xo.tcl -tclargs $(KERNEL_NAME)
 
 package: axis_measurer/axis_measurer.xpr package_xo.tcl
 	@echo "Packaging manually!"
-	vivado -mode batch -source package_xo.tcl
+	vivado -mode batch -source package_xo.tcl -tclargs $(KERNEL_NAME)
 
 setver:
 	sed -i "s/Vivado Synthesis [0-9][0-9][0-9][0-9]/Vivado Synthesis $(VIVADO_YEAR)/g" create_project.tcl

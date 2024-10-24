@@ -1,3 +1,5 @@
+set kernelname [lindex $argv 0]
+
 open_project axis_measurer/axis_measurer.xpr
 ipx::package_project -root_dir ./ip_repo -vendor user.org -library user -taxonomy /UserIP -import_files
 
@@ -19,4 +21,4 @@ ipx::create_xgui_files [ipx::current_core]
 ipx::update_checksums [ipx::current_core]
 ipx::check_integrity -kernel -xrt [ipx::current_core]
 ipx::save_core [ipx::current_core]
-package_xo  -xo_path ./xo/axis_measure_top.xo -kernel_name axis_measure_top -ip_directory ./ip_repo -ctrl_protocol ap_ctrl_none
+package_xo  -xo_path ./xo/axis_measure_top.xo -kernel_name $kernelname -ip_directory ./ip_repo -ctrl_protocol ap_ctrl_none
