@@ -68,6 +68,8 @@ am.start_measurement();
 // ...
 ``` 
 
+To get the width of the AXI Stream, for example to call `am.mbps()` or for other calculations, query `am.get_axis_width_bytes()`.
+
 ## Controlling the kernel manually
 The kernel's registers are adressable via the `xrt::ip` class with the given offsets.
 The following table gives those offsets.
@@ -79,7 +81,8 @@ The following table gives those offsets.
 | 0x14 - 0x1c  	| AXI Stream Data Packets (2 x 32 bit) 	|
 | 0x1c - 0x24  	| Clock cycles passed (2 x 32 bit)     	|
 | 0x24 - 0x2c   | Latency until first assert from reset |
-| 0x2c - ...    | Data of last frame                    |
+| 0x2c - 0x30   | AXIS Data Width in Bytes              |
+| 0x30 - ...    | Data of last transmitted frame        |
 
 
 Both assertions and clock cycles passed are split into 2 fields of 32 bit each, with the __lower__ half being first (0x14-0x18), and the more significant half being __higher__ (0x18-0x1c).

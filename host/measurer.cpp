@@ -12,7 +12,8 @@
 #define ASSERTIONS_OFFSET               0x14
 #define CYCLES_OFFSET                   0x1C
 #define LATENCY_OFFSET                  0x24
-#define LAST_FRAME_OFFSET               0x2C
+#define AXIS_DATA_WIDTH_OFFSET          0x2C
+#define LAST_FRAME_OFFSET               0x30
 
 // Constants for the control register
 #define START 0x1
@@ -53,6 +54,10 @@ class AXISMeasureKernel {
 
         bool is_active() {
             return kernel.read_register(AXIS_MEASURE_CONTROL_OFFSET) == 0x1;
+        }
+
+        uint32_t get_axis_width_bytes() {
+            return kernel.read_register(AXIS_DATA_WIDTH_OFFSET);
         }
 
         uint32_t read(uint32_t offset) {

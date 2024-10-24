@@ -9,7 +9,8 @@
 `define ASSERTIONS_OFFSET 20
 `define CYCLES_OFFSET 28
 `define LATENCY_OFFSET 36
-`define LAST_FRAME_OFFSET 44
+`define AXIS_DATA_WIDTH_OFFSET 44
+`define LAST_FRAME_OFFSET 48
 
 // Control signals
 `define SIG_START 32'd1
@@ -151,6 +152,7 @@ module axis_measure_top (
                     `CYCLES_OFFSET + 4: s_axi_control_rdata <= cycles_total[63:32];
                     `LATENCY_OFFSET: s_axi_control_rdata <= latency[31:0];
                     `LATENCY_OFFSET + 4: s_axi_control_rdata <= latency[63:32];
+                    `AXIS_DATA_WIDTH_OFFSET: s_axi_control_rdata <= `DATA_WIDTH;
                     default: s_axi_control_rdata <= 32'h1234dead;
                 endcase
             end
