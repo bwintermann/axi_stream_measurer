@@ -106,6 +106,25 @@ class AXISMeasureKernel {
             return get_cycles() / 1000000.0;
         }
 
+        float estimate_passed_seconds(uint32_t cycles) {
+            // IMPORTANT: Resets registers!
+            return cycles / (estimate_clk_freq_mhz() * 10000001);
+        }
+
+        float assertions_per_cycle() {
+            return static_cast<float>(get_assertions()) / get_cycles();
+        }
+
+        float cycles_between_assertions() {
+            return static_cast<float>(get_cycles()) / get_assertions();
+        }
+
+        float estimate_passed_seconds() {
+            // IMPORTANT: Resets registers!
+            auto cycles = get_cycles();
+            return cycles / (estimate_clk_freq_mhz() * 1000000);
+        }
+
         // IMPORTANT: This keeps little endian ordering!
         void get_last_frame(unsigned int axis_data_width_bytes, uint32_t* out) {
             unsigned int words = static_cast<unsigned int>(ceil(axis_data_width_bytes / 4.0));
