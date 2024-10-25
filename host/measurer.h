@@ -1,5 +1,8 @@
 /** Helper utilities to make usage of the kernels easier **/
 
+#ifndef AXIS_MEASURER_H
+#define AXIS_MEASURER_H
+
 #include "experimental/xrt_kernel.h"
 #include "experimental/xrt_ip.h"
 #include <math.h>
@@ -92,12 +95,34 @@ class AXISMeasureKernel {
             return data;
         }
 
+        float estimate_clk_freq_mhz() {
+            // Can be used to estimate the clock frequency in case the data cannot be extracted anywhere else
+            // Only an esimtate, use with caution! Should only be off by a few MHz +- though
+            // IMPORTANT: This overwrites the data, so make sure to have a backup!
+            clear_and_stop_measurement();
+            start_measurement();
+            std::this_thread::sleep_for(std::chrono::seconds(1));
+            stop_measurement();
+            return get_cycles() / 1000000.0;
+        }
+
         // IMPORTANT: This keeps little endian ordering!
         void get_last_frame(unsigned int axis_data_width_bytes, uint32_t* out) {
             unsigned int words = static_cast<unsigned int>(ceil(axis_data_width_bytes / 4.0));
             for (unsigned int i = 0; i < words; i++) {
                 out[i] = kernel.read_register(LAST_FRAME_OFFSET + i * 4);
             }
+        }
+
+        auto mbps() {
+            // Same as below but use calculated clock estimate and kernel given data width
+            auto assertions = get_assertions();
+            auto cycles = get_cycles();
+            auto mhz = estimate_clk_freq_mhz();
+            auto byte_width = get_axis_width_bytes();
+            auto data_megabyte = static_cast<float>(byte_width * assertions) / 1000000.0;
+            auto seconds_passed = static_cast<float>(cycles) / (mhz * 1000000.0);
+            return data_megabyte / seconds_passed;
         }
 
         auto mbps(unsigned int mhz, unsigned int axis_data_width_bytes) {
@@ -114,3 +139,5 @@ class AXISMeasureKernel {
             return data;
         }
 };
+
+#endif

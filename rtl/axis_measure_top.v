@@ -4,7 +4,7 @@
 // AXI Signals
 `define AXI_OKAY 2'b00
 
-// Byte addressed register offsets, 0-0x14(20) reserved for control
+// Byte addressed register offsets
 `define CONTROL_OFFSET 16
 `define ASSERTIONS_OFFSET 20
 `define CYCLES_OFFSET 28
@@ -19,7 +19,6 @@
 
 module axis_measure_top (
 
-    // TODO: Must be defined as an interface for vitis packing
     input wire ap_clk,
 
     //********************* AXI CONTROL WIRES *********************
@@ -63,6 +62,7 @@ module axis_measure_top (
 
     parameter INITIAL_RECORD_ENABLE = `START_ENABLED;
     parameter RECORD_ONLY_NONZERO = `RECORD_ONLY_NONZERO;
+    parameter CLEAR_CONTROL_ON_WRITE = 0;
 
     // Awaiting an AXI Data Write beat
     reg awaiting_write = 0;
@@ -77,7 +77,7 @@ module axis_measure_top (
     reg [`DATA_WIDTH * 8 - 1 : 0] last_frame = 0;
     
     // If the flag is set, only record values that are non zero
-    // Need reduction parameters for cases when parameter is passed without width annotation
+    // Need reduction operators for cases when parameter is passed without width annotation
     wire can_record = (|RECORD_ONLY_NONZERO && |instream_tdata) || (~|RECORD_ONLY_NONZERO);
 
     // Control register
@@ -188,6 +188,11 @@ module axis_measure_top (
                 end
             end
             s_axi_control_bvalid <= 1;                     
+        end else begin
+            // If param is set, reset control register to STOP automatically afer SIG_CLEAR was sent
+            if (CLEAR_CONTROL_ON_WRITE && control_reg == `SIG_CLEAR) begin
+                control_reg <= `SIG_STOP;
+            end
         end
 
 
